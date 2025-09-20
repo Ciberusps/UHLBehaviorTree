@@ -5,7 +5,8 @@
 
 #include "UHLBTBlueprintLibrary.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "Utils/UnrealHelperLibraryBPL.h"
+#include "UHLAIBlueprintLibrary.h"
+#include "Engine/Engine.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
@@ -84,7 +85,11 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	    }
 	    else
 	    {
-	        UUnrealHelperLibraryBPL::DebugPrintStrings("Enum from BB key ", BlackboardKey.SelectedKeyName.ToString(), "not found");
+	        if (GEngine)
+	        {
+	        	const FString Message = FString::Printf(TEXT("Enum from BB key %s not found"), *BlackboardKey.SelectedKeyName.ToString());
+	        	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Message);
+	        }
 	    }
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_NativeEnum::StaticClass())
@@ -96,7 +101,11 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	    }
 		else
 		{
-			UUnrealHelperLibraryBPL::DebugPrintStrings("Enum from BB key ", BlackboardKey.SelectedKeyName.ToString(), "not found");
+			if (GEngine)
+			{
+				const FString Message = FString::Printf(TEXT("Enum from BB key %s not found"), *BlackboardKey.SelectedKeyName.ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Message);
+			}
 		}
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
@@ -204,7 +213,7 @@ void UBTT_SetBBValue::PostLoad()
 			OperationOnBBValue.RotatorValue = RotatorValue;
 			RotatorValue = FRotator::ZeroRotator;
 		};
-		
+
 		bMigratedToMathOperation = true;
 	}
 }
@@ -245,7 +254,7 @@ TArray<FString> UBTT_SetBBValue::GetEnumOptions()
 	{
 		return Result;
 	}
-	
+
 	if (!EntryInfo) return Result;
 
 	const UEnum* Enum = (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())

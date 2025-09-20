@@ -13,7 +13,8 @@
 #include "Animation/AnimMontage.h"
 #include "DrawDebugHelpers.h"
 #include "Core/UHLAIActorSettings.h"
-#include "Utils/UnrealHelperLibraryBPL.h"
+#include "UHLAIBlueprintLibrary.h"
+#include "Engine/Engine.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_TurnTo)
 
@@ -126,12 +127,12 @@ EBTNodeResult::Type UBTT_TurnTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	else if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
 	{
 		const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
-	
+
 		if (FAISystem::IsValidLocation(KeyValue))
 		{
 			const FVector::FReal AngleDifference = TurnToStatics::CalculateAngleDifferenceDot(Pawn->GetActorForwardVector()
 				, (KeyValue - PawnLocation));
-	
+
 			if (AngleDifference >= PrecisionDot)
 			{
 				Result = EBTNodeResult::Succeeded;
@@ -198,9 +199,12 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		    float DeltaAngleRad = TurnToStatics::CalculateAngleDifferenceDot(PawnDirection, FocalPoint - AIController->GetPawn()->GetActorLocation());
 		    // float DeltaAngle = FMath::RadiansToDegrees(FMath::Acos(DeltaAngleRad));
 		    float DeltaAngle = MyMemory->bActorSet
-				? UUnrealHelperLibraryBPL::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet)
-				: UUnrealHelperLibraryBPL::RelativeAngleToVector(AICharacter, MyMemory->FocusLocationSet);
-		    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle), "", "", "", "", "", "", "", "", "", -1, FName("Test"));
+				? UUHLAIBlueprintLibrary::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet)
+				: UUHLAIBlueprintLibrary::RelativeAngleToVector(AICharacter, MyMemory->FocusLocationSet);
+		    if (GEngine)
+		    {
+		    	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle));
+		    }
 
 			if (bDebug)
 			{
@@ -208,12 +212,15 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 					? MyMemory->FocusActorSet->GetActorLocation()
 					: MyMemory->FocusLocationSet;
 				DrawDebugSphere(AIController->GetWorld(), CurrentLocation,
-					50.0f, 12, FColor::Blue, false, -1);	
+					50.0f, 12, FColor::Blue, false, -1);
 			}
 
 			if (DeltaAngleRad >= PrecisionDot)
 			{
-			    UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached));
+			    if (GEngine)
+			    {
+			    	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached));
+			    }
 			    bool bCanStopMontage = false;
 			    if (MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached)
 			    {

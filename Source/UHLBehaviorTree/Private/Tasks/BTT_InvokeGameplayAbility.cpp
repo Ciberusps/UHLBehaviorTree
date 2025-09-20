@@ -7,7 +7,8 @@
 #include "AbilitySystemInterface.h"
 #include "AIController.h"
 #include "AbilitySystemGlobals.h"
-#include "Utils/UnrealHelperLibraryBPL.h"
+#include "UHLAIBlueprintLibrary.h"
+#include "Engine/Engine.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_InvokeGameplayAbility)
 
@@ -35,16 +36,16 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
     UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(AIOwner->GetPawn());
     if (!ASC)
     {
-        if (bDebugMessages.GetValue(OwnerComp))
+        if (bDebugMessages.GetValue(OwnerComp) && GEngine)
         {
-            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] OwnerActor \"%s\" don't have AbilitySystem(implements IAbilitySystemInterface) add it"), *AIOwner->GetPawn()->GetName()));
+        	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[BTT_InvokeGameplayAbility] OwnerActor \"%s\" don't have AbilitySystem(implements IAbilitySystemInterface) add it"), *AIOwner->GetPawn()->GetName()));
         }
         return EBTNodeResult::Failed;
     }
 
 	FGameplayAbilitySpec* AbilitySpec = nullptr;
 	FGameplayAbilitySpecHandle* GameplayAbilitiesSpecHandle = nullptr;
-	
+
     // TODO UHL->FindAbilitySpecByTags?
     TArray<FGameplayAbilitySpecHandle> GameplayAbilitiesSpecs = {};
     ASC->GetAllAbilities(GameplayAbilitiesSpecs);
@@ -77,17 +78,17 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
 	            Result = EBTNodeResult::Succeeded;
 	        }
 
-	        if (bDebugMessages.GetValue(OwnerComp))
-	        {
-	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.GetValue(OwnerComp).ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
-	        }
-	    }
-	    else
-	    {
-	        if (bDebugMessages.GetValue(OwnerComp))
-	        {
-	            UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.GetValue(OwnerComp).ToString()));
-	        }
+            if (bDebugMessages.GetValue(OwnerComp) && GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("[BTT_InvokeGameplayAbility] TryActivateAbility - \"%s\" - %s"), *GameplayTag.GetValue(OwnerComp).ToString(), bAbilityActivated ? TEXT("activated") : TEXT("failed")));
+            }
+            }
+            else
+            {
+            if (bDebugMessages.GetValue(OwnerComp) && GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Ability - \"%s\" - not found, give it to character if forgot"), *GameplayTag.GetValue(OwnerComp).ToString()));
+            }
 	    }
     }
     else
@@ -110,7 +111,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::AbortTask(UBehaviorTreeComponent
 	if (AIOwner)
 	{
 		UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(AIOwner->GetPawn());
-		
+
 		if (ASC)
 		{
 			const FGameplayTagContainer TagsContainer = FGameplayTagContainer(GameplayTag.GetValue(OwnerComp));
@@ -119,11 +120,11 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::AbortTask(UBehaviorTreeComponent
 			{
 				ASC->OnAbilityEnded.RemoveAll(this);
 			}
-	
-			if (bDebugMessages.GetValue(OwnerComp))
-			{
-				UUnrealHelperLibraryBPL::DebugPrintStrings(FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Task was aborted, CancelAbility - %s"), *GameplayTag.GetValue(OwnerComp).ToString()));
-			}
+
+            if (bDebugMessages.GetValue(OwnerComp) && GEngine)
+            {
+            	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString::Printf(TEXT("[BTT_InvokeGameplayAbility] Task was aborted, CancelAbility - %s"), *GameplayTag.GetValue(OwnerComp).ToString()));
+            }
 		}
 	}
 
@@ -156,7 +157,7 @@ void UBTT_InvokeGameplayAbility::InitializeMemory(
 {
 	FInvokeGameplayAbilityMemory* MyMemory = CastInstanceNodeMemory<FInvokeGameplayAbilityMemory>(NodeMemory);
 	check(MyMemory);
-	
+
 	MyMemory->AbilityEndHandle.Reset();
 }
 

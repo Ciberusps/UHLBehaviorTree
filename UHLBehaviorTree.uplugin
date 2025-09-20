@@ -29,10 +29,6 @@
       "Enabled": true
     },
     {
-      "Name": "UnrealHelperLibrary",
-      "Enabled": true
-    },
-    {
       "Name": "UHLAI",
       "Enabled": true
     }

@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "BehaviorTree/ValueOrBBKey.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Name.h"
-#include "Utils/UnrealHelperLibraryBPL.h"
+#include "Engine/Engine.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UHLValueOrBBKey_GameplayTag)
 
@@ -16,9 +16,10 @@ FGameplayTag FUHLValueOrBBKey_GameplayTag::GetValue(const UBlackboardComponent& 
 	FGameplayTag FoundGameplayTag = FGameplayTag::RequestGameplayTag(TagName, false);
 	if (!FoundGameplayTag.IsValid())
 	{
-		UUnrealHelperLibraryBPL::DebugPrintString(Blackboard.GetWorld(),
-			FString::Printf(TEXT("FUHLValueOrBBKey_GameplayTag::GetValue GameplayTag %s not found"), *Key.ToString())
-		);
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("FUHLValueOrBBKey_GameplayTag::GetValue GameplayTag %s not found"), *Key.ToString()));
+		}
 		return DefaultValue;
 	}
 	return FoundGameplayTag;
@@ -35,9 +36,10 @@ FGameplayTag FUHLValueOrBBKey_GameplayTag::GetValue(const UBehaviorTreeComponent
 	FGameplayTag FoundGameplayTag = FGameplayTag::RequestGameplayTag(TagName, false);
 	if (!FoundGameplayTag.IsValid())
 	{
-		UUnrealHelperLibraryBPL::DebugPrintString(BehaviorComp.GetWorld(),
-			FString::Printf(TEXT("FUHLValueOrBBKey_GameplayTag::GetValue GameplayTag %s not found"), *Key.ToString())
-		);
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("FUHLValueOrBBKey_GameplayTag::GetValue GameplayTag %s not found"), *Key.ToString()));
+		}
 		return DefaultValue;
 	}
 	return FoundGameplayTag;
@@ -59,7 +61,7 @@ bool FUHLValueOrBBKey_GameplayTag::SerializeFromMismatchedTag(
 		DefaultValue = TempTag; // Store it in a compatible property
 		return true;
 	}
-	return false;	
+	return false;
 }
 
 #if WITH_EDITOR

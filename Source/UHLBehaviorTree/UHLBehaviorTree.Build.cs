@@ -34,6 +34,8 @@ public class UHLBehaviorTree : ModuleRules
 
 				"AIModule",
 
+                "UHLAI",
+
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -43,11 +45,6 @@ public class UHLBehaviorTree : ModuleRules
 			new string[]
 			{
 				"Engine",
-
-				// TODO: probably should be removed
-				"UnrealHelperLibrary",
-
-				"UHLAI",
 
 				"AnimGraphRuntime",
 			}
