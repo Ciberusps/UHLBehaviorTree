@@ -1,0 +1,40 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "UHLBehaviorTrees",
+  "Description": "Behavior Tree nodes and helpers",
+  "Category": "AI",
+  "EnabledByDefault": true,
+  "CanContainContent": true,
+  "Modules": [
+    {
+      "Name": "UHLBehaviorTrees",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "UHLBehaviorTreesEditor",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GameplayAbilities",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayTagsEditor",
+      "Enabled": true
+    },
+    {
+      "Name": "UnrealHelperLibrary",
+      "Enabled": true
+    },
+    {
+      "Name": "UHLAI",
+      "Enabled": true
+    }
+  ]
+}
