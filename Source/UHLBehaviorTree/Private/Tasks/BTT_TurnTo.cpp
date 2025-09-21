@@ -15,6 +15,7 @@
 #include "Core/UHLAIActorSettings.h"
 #include "UHLAIBlueprintLibrary.h"
 #include "Engine/Engine.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_TurnTo)
 
@@ -201,10 +202,8 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		    float DeltaAngle = MyMemory->bActorSet
 				? UUHLAIBlueprintLibrary::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet)
 				: UUHLAIBlueprintLibrary::RelativeAngleToVector(AICharacter, MyMemory->FocusLocationSet);
-		    if (GEngine)
-		    {
-		    	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle));
-		    }
+			FString Message = FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle);
+			UKismetSystemLibrary::PrintString(nullptr, Message, true, true, FColor::Green, 5.0f);
 
 			if (bDebug)
 			{
@@ -217,10 +216,8 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
 			if (DeltaAngleRad >= PrecisionDot)
 			{
-			    if (GEngine)
-			    {
-			    	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached));
-			    }
+				FString DebugMessage = FString::Printf(TEXT("TurnRange->bOverrideStopMontageOnGoalReached %hhd"), MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached);
+				UKismetSystemLibrary::PrintString(nullptr, DebugMessage, true, true, FColor::Cyan, 5.0f);
 			    bool bCanStopMontage = false;
 			    if (MyMemory->CurrentTurnRange.bOverrideStopMontageOnGoalReached)
 			    {

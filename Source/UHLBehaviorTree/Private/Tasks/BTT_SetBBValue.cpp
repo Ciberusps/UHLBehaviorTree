@@ -20,6 +20,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_String.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_SetBBValue)
 
@@ -85,11 +86,8 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	    }
 	    else
 	    {
-	        if (GEngine)
-	        {
-	        	const FString Message = FString::Printf(TEXT("Enum from BB key %s not found"), *BlackboardKey.SelectedKeyName.ToString());
-	        	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Message);
-	        }
+	        const FString Message = FString::Printf(TEXT("Enum from BB key %s not found"), *BlackboardKey.SelectedKeyName.ToString());
+	    	UKismetSystemLibrary::PrintString(nullptr, Message, true, true, FColor::Red, 5.0f);
 	    }
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_NativeEnum::StaticClass())
@@ -101,11 +99,8 @@ EBTNodeResult::Type UBTT_SetBBValue::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	    }
 		else
 		{
-			if (GEngine)
-			{
-				const FString Message = FString::Printf(TEXT("Enum from BB key %s not found"), *BlackboardKey.SelectedKeyName.ToString());
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Message);
-			}
+			const FString Message = FString::Printf(TEXT("Enum from BB key %s not found"), *BlackboardKey.SelectedKeyName.ToString());
+			UKismetSystemLibrary::PrintString(nullptr, Message, true, true, FColor::Red, 5.0f);
 		}
 	}
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
