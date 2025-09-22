@@ -203,7 +203,7 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 				? UUHLAIBlueprintLibrary::RelativeAngleToActor(AICharacter, MyMemory->FocusActorSet)
 				: UUHLAIBlueprintLibrary::RelativeAngleToVector(AICharacter, MyMemory->FocusLocationSet);
 			FString Message = FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle);
-			UKismetSystemLibrary::PrintString(nullptr, Message, true, true, FColor::Green, 5.0f);
+			UKismetSystemLibrary::PrintString(nullptr, Message, true, true, FColor::Green, 5.0f, "DeltaAngle");
 
 			if (bDebug)
 			{
