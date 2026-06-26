@@ -15,6 +15,7 @@
 #include "Core/UHLAIActorSettings.h"
 #include "UHLAIBlueprintLibrary.h"
 #include "Engine/Engine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTT_TurnTo)
@@ -204,7 +205,26 @@ void UBTT_TurnTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 				: UUHLAIBlueprintLibrary::RelativeAngleToVector(AICharacter, MyMemory->FocusLocationSet);
 			FString Message = FString::Printf(TEXT("DeltaAngle %f"), DeltaAngle);
 			UKismetSystemLibrary::PrintString(nullptr, Message, true, true, FColor::Green, 5.0f, "DeltaAngle");
-
+			// --- debug: TickAngle (same fields as StateTree version) ---
+			{
+		    	UCharacterMovementComponent* Move = AICharacter ? AICharacter->GetCharacterMovement() : nullptr;
+		    	const FString PawnName = AICharacter ? AICharacter->GetName() : TEXT("NoPawn");
+		    	const FString DbgMsg = FString::Printf(
+					TEXT("[TurnTo-BT][%s] DeltaAngle=%.1f | RotRate.Yaw=%.0f | bUseCtrlDesiredRot=%d | bOrientToMove=%d | bUseCtrlRotYaw=%d | RootMotion=%d"),
+					*PawnName, DeltaAngle,
+					Move ? Move->RotationRate.Yaw : -1.f,
+					Move ? (int32)Move->bUseControllerDesiredRotation : -1,
+					Move ? (int32)Move->bOrientRotationToMovement : -1,
+					AICharacter ? (int32)AICharacter->bUseControllerRotationYaw : -1,
+					AICharacter ? (int32)AICharacter->IsPlayingRootMotion() : -1);
+		    	UE_LOG(LogTemp, Log, TEXT("%s"), *DbgMsg);
+		    	if (bDebug && GEngine)
+		    	{
+		    		GEngine->AddOnScreenDebugMessage(
+						(uint64)GetTypeHash(FString(TEXT("TickAngle")) + PawnName),
+						5.0f, FColor::Magenta, DbgMsg);
+		    	}
+			}
 			if (bDebug)
 			{
 				FVector CurrentLocation = MyMemory->bActorSet
