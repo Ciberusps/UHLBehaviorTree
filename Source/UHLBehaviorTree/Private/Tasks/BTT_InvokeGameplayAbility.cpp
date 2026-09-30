@@ -61,7 +61,7 @@ EBTNodeResult::Type UBTT_InvokeGameplayAbility::ExecuteTask(UBehaviorTreeCompone
         }
     }
 
-    if (bActivate)
+    if (bActivate.GetValue(OwnerComp))
     {
 	    if (GameplayAbilitySpecFound && AbilitySpec != nullptr)
 	    {

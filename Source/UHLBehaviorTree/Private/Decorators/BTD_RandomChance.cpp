@@ -7,6 +7,7 @@
 #include "Engine/Engine.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/UnrealType.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -83,7 +84,8 @@ FString UBTD_RandomChance::GetStaticDescription() const
 {
 	// TODO BB value preview?
 	// float CurrentChance = bUseBlackboardValue ? GetBlackboardAsset()->GetKey(ChanceInBB.GetSelectedKeyID()) : Chance;
-	return FString::Printf(TEXT("Chance - %.2f%% (%s)"), Chance * 100.0f, *Chance.ToString());
+	return FString::Printf(TEXT("Chance - %.2f%% (%s)"),
+		Chance.GetValue(static_cast<const UBlackboardComponent*>(nullptr)) * 100.0f, *Chance.ToString());
 }
 
 void UBTD_RandomChance::InitializeFromAsset(UBehaviorTree& Asset)

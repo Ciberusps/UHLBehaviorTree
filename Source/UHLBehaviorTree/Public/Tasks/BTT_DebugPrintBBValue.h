@@ -24,7 +24,7 @@ public:
 	float Duration = 3.5f;
 
 	UPROPERTY(Category="Decorator", EditAnywhere)
-	FLinearColor Color = FLinearColor(0, 0.66, 1);;
+	FLinearColor Color = FLinearColor(0.f, 0.66f, 1.f);
 
 	UPROPERTY(Category="Decorator", EditAnywhere)
     FName Key = NAME_None;
